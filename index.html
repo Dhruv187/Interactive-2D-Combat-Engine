@@ -4,14 +4,130 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Interactive 2D Combat Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./style.css" />
     <link rel="icon" href="./public/images/logo.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <script type="module" src="./src/index.js"></script>
   </head>
   <body>
-    <main>
-      <canvas width="386" height="224"></canvas>
-    </main>
+    <p class="cerdit" style="color: white">Project by: Dhruv Gandhi</p>
+    <div class="cabinet">
+      <div class="pesudo-cabinet-el-1"></div>
+      <div class="pesudo-cabinet-el-2"></div>
+      <div class="top">
+        <h1>ARCADE</h1>
+        <p>Project by: Dhruv Gandhi</p>
+      </div>
+
+      <div class="screen">
+        <main>
+          <canvas width="386" height="224"></canvas>
+        </main>
+      </div>
+      <div class="pesudo-screen-el-1"></div>
+      <div class="pesudo-screen-el-2"></div>
+      <div class="attack-row-1">
+        <div class="attack-row1-btn">
+          <button id="attack-LK" class="attack-btn attack-btn-LK">LK</button>
+          <button id="attack-MK" class="attack-btn attack-btn-MK">MK</button>
+          <button id="attack-HK" class="attack-btn attack-btn-HK">HK</button>
+        </div>
+      </div>
+      <div class="pesudo-row-el"></div>
+      <div class="attack-row-2">
+        <div class="attack">
+          <button
+            id="attack-LP"
+            class="attack-btn attack-row2-btn attack-btn-LP"
+          >
+            LP
+          </button>
+          <button
+            id="attack-MP"
+            class="attack-btn attack-row2-btn attack-btn-MP"
+          >
+            MP
+          </button>
+          <button
+            id="attack-HP"
+            class="attack-btn attack-row2-btn attack-btn-HP"
+          >
+            HP
+          </button>
+        </div>
+        <div class="container">
+          <div class="joystick">
+            <button id="up-btn" class="joystick-btn up-btn">
+              <svg viewBox="0 0 24 24">
+                <rect x="10" y="8" width="4" height="12" fill="currentColor" />
+                <polygon points="6,10 12,4 18,10" fill="currentColor" />
+              </svg>
+            </button>
+            <button id="start-game" class="start"></button>
+            <button id="down-btn" class="joystick-btn down-btn">
+              <svg viewBox="0 0 24 24">
+                <rect x="10" y="4" width="4" height="12" fill="currentColor" />
+                <polygon points="6,14 12,20 18,14" fill="currentColor" />
+              </svg>
+            </button>
+            <button id="left-btn" class="joystick-btn left-btn">
+              <svg viewBox="0 0 24 24">
+                <rect x="8" y="10" width="12" height="4" fill="currentColor" />
+                <polygon points="10,6 4,12 10,18" fill="currentColor" />
+              </svg>
+            </button>
+            <button id="right-btn" class="joystick-btn right-btn">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="10" width="12" height="4" fill="currentColor" />
+                <polygon points="14,6 20,12 14,18" fill="currentColor" />
+              </svg>
+            </button>
+          </div>
+          <div class="list-ctrl">
+            <li class="controls">
+              <h2>Controls:-</h2>
+              <ul>
+                LP: Light Punch
+              </ul>
+              <ul>
+                MP: Medium Punch
+              </ul>
+              <ul>
+                HP: Heavy Punch
+              </ul>
+              <ul>
+                LK: Light Kick
+              </ul>
+              <ul>
+                MK: Medium Kick
+              </ul>
+              <ul>
+                HK: Heavy Kick
+              </ul>
+            </li>
+          </div>
+        </div>
+        <div class="design">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- images-->
     <img src="./public/images/Ken.png" alt="ken" />
     <img id="Shadow" src="./public/images/shadow.png" alt="shadow" />
@@ -123,5 +239,7 @@
       src="./public/sounds/heavy-kick-hit.ogg"
       preload="auto"
     ></audio>
+
+    <script type="module" src="./src/mobileControls.js"></script>
   </body>
 </html>

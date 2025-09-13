@@ -3,6 +3,7 @@ import { BattleScene } from "./BattleScene.js";
 import { gameState } from "../states/gameState.js";
 import { getStageClass } from "./stageSelection.js";
 import { playSound, stopSound } from "../engine/soundHandler.js";
+import { setCurrentScene } from "../engine/mobileControls.js";
 
 export class VersusScene {
   image = document.getElementById("versusScene");
@@ -23,9 +24,10 @@ export class VersusScene {
 
     // Start fading in from black
     this.contextHandler.brightness = 0;
-    this.contextHandler.startGlowUp(); // Replaced startDimUp with startGlowUp
+    this.contextHandler.startGlowUp();
 
     this.setupEventListeners();
+    setCurrentScene(this);
   }
 
   setupEventListeners() {
@@ -40,7 +42,12 @@ export class VersusScene {
     if (this.isTransitioning) return;
     this.startTransition();
   }
-
+  handleMobileInput(key, code) {
+    if (this.isTransitioning) return;
+    if (key === "Enter") {
+      this.startTransition();
+    }
+  }
   handleKeyDown(event) {
     if (this.isTransitioning) return;
     if (event.key === "Enter" || event.key === " ") {

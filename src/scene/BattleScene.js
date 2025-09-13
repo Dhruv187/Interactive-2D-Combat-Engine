@@ -19,6 +19,7 @@ import { LightHitSplash } from "../entities/fighter/shared/LightHitSplash.js";
 import { MediumHitSplash } from "../entities/fighter/shared/MediumHitSplash.js";
 import { HeavyHitSplash } from "../entities/fighter/shared/heavyHitSplash.js";
 import { stopSound } from "../engine/soundHandler.js";
+import { SimpleAI } from "../states/ai.js";
 
 export class BattleScene {
   constructor(changeScene = null) {
@@ -44,7 +45,7 @@ export class BattleScene {
     this.changeScene = changeScene;
 
     this.startRound();
-
+    this.aiController = null;
     this.overlays = [new StatusBar(this.fighters, this.onTimeEnd.bind(this))];
   }
 
@@ -222,6 +223,10 @@ export class BattleScene {
     this.fighters = this.getFighterEntities();
     this.camera = new Camera(448, 16, this.fighters);
     this.shadows = this.fighters.map((fighter) => new Shadow(fighter));
+
+    if (gameState.mode === "ai") {
+      this.ai = new SimpleAI(this.fighters[1], this.fighters[0]);
+    }
   }
 
   updateFighters(time, context) {
@@ -231,6 +236,10 @@ export class BattleScene {
       } else {
         fighter.update(time, context, this.camera);
       }
+    }
+
+    if (gameState.mode === "ai" && this.ai) {
+      this.ai.update();
     }
 
     // Check if KO animation is complete and victory state hasn't been set yet

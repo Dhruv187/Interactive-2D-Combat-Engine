@@ -8,6 +8,23 @@ const playerInputEnabled = {
   0: true,
   1: true,
 };
+export function simulateKeyDown(key, code) {
+  console.log("Simulate down:", code);
+
+  // Mark key as held
+  if (!heldKey.has(code)) {
+    heldKey.add(code);
+    pressedKeys.delete(code);
+  }
+}
+
+export function simulateKeyUp(key, code) {
+  console.log("Simulate up:", code);
+
+  // Release key
+  heldKey.delete(code);
+  pressedKeys.delete(code);
+}
 
 export function setPlayerInput(id, enabled) {
   playerInputEnabled[id] = enabled;

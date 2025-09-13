@@ -6,4 +6,5 @@ export const gameState = {
     createDefaultFighterState(FighterId.RYU),
     createDefaultFighterState(FighterId.KEN),
   ],
+  mode: "pvp", // default mode: player vs player
 };

@@ -1,6 +1,9 @@
 import { ContextHandler } from "../engine/contextHandler.js";
 import { playSound, stopSound } from "../engine/soundHandler.js";
 import { StageSelectionScene } from "./stageSelection.js";
+import { setPlayerInput } from "../engine/inputHandler.js";
+import { gameState } from "../states/gameState.js";
+import { setCurrentScene } from "../engine/mobileControls.js";
 
 export class TitleScene {
   music = document.getElementById("title-theme");
@@ -52,6 +55,28 @@ export class TitleScene {
     this.contextHandler = new ContextHandler();
 
     this.setupInput();
+
+    setCurrentScene(this);
+  }
+
+  handleMobileInput(key, state = "down") {
+    if (state !== "down") return; // ignore releases in menu
+
+    console.log(`Mobile input detected: ${key} (${state})`);
+
+    if (this.isTransitioning) return;
+
+    switch (key) {
+      case "ArrowUp":
+        this.selectedOption = Math.max(0, this.selectedOption - 1);
+        break;
+      case "ArrowDown":
+        this.selectedOption = Math.min(2, this.selectedOption + 1);
+        break;
+      case "Enter":
+        this.startGame();
+        break;
+    }
   }
 
   setupInput() {
@@ -63,6 +88,7 @@ export class TitleScene {
   removeInputListeners() {
     document.removeEventListener("click", this.clickHandler);
     document.removeEventListener("keydown", this.keyDownHandler);
+    setCurrentScene(null);
   }
 
   handleKeyDown(event) {
@@ -83,22 +109,57 @@ export class TitleScene {
   }
 
   startGame() {
-    if (this.selectedOption !== 0 || this.isTransitioning) return; // Only proceed if on "PRESS TO START"
+    if (this.selectedOption === 0 || this.isTransitioning) {
+      // Only proceed if on "PRESS TO START"
 
-    stopSound(this.music, 0.3);
-    this.isTransitioning = true;
+      stopSound(this.music, 0.3);
+      this.isTransitioning = true;
 
-    // Start dimming down the screen
-    this.contextHandler.startDimDown();
+      // Start dimming down the screen
+      this.contextHandler.startDimDown();
 
-    // Schedule transition to StageSelectionScene
-    setTimeout(() => {
-      if (this.changeScene && typeof this.changeScene === "function") {
-        this.removeInputListeners();
-        const stageSelectionScene = new StageSelectionScene(this.changeScene);
-        this.changeScene(stageSelectionScene);
-      }
-    }, 1000); // Allow time for dimming effect
+      // Schedule transition to StageSelectionScene
+      setTimeout(() => {
+        if (this.changeScene && typeof this.changeScene === "function") {
+          this.removeInputListeners();
+          const stageSelectionScene = new StageSelectionScene(this.changeScene);
+          this.changeScene(stageSelectionScene);
+        }
+      }, 1000);
+    } // Allow time for dimming effect
+    else if (this.selectedOption === 1) {
+      stopSound(this.music, 0.3);
+      this.isTransitioning = true;
+
+      // Start dimming down the screen
+      this.contextHandler.startDimDown();
+
+      // Schedule transition to StageSelectionScene
+      setTimeout(() => {
+        if (this.changeScene && typeof this.changeScene === "function") {
+          this.removeInputListeners();
+          const stageSelectionScene = new StageSelectionScene(this.changeScene);
+          this.changeScene(stageSelectionScene);
+        }
+      }, 1000);
+    } else if (this.selectedOption === 2) {
+      stopSound(this.music, 0.3);
+      setPlayerInput(1, false);
+      gameState.mode = "ai"; // Set mode
+      this.isTransitioning = true;
+
+      // Start dimming down the screen
+      this.contextHandler.startDimDown();
+
+      // Schedule transition to StageSelectionScene
+      setTimeout(() => {
+        if (this.changeScene && typeof this.changeScene === "function") {
+          this.removeInputListeners();
+          const stageSelectionScene = new StageSelectionScene(this.changeScene);
+          this.changeScene(stageSelectionScene);
+        }
+      }, 1000);
+    }
   }
 
   update(time, context) {
@@ -164,7 +225,7 @@ export class TitleScene {
 
     this.drawTitle(context, "PRESS TO START", 130, 170, 0.7, 0.7);
     this.drawTitle(context, "CREATE |JOIN ROOM @SOON", 130, 183, 0.7, 0.7);
-    this.drawTitle(context, "AI VS PLAYER @SOON", 130, 196, 0.7, 0.7);
+    this.drawTitle(context, "AI VS PLAYER | MOBILE |", 130, 196, 0.7, 0.7);
 
     // Draw the arrow
     this.drawArrow(context);

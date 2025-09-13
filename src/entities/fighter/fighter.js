@@ -498,6 +498,16 @@ export class Fighter {
   }
 
   handleWalkForwardState() {
+    if (this.playerId === 1 && gameState.mode === "ai") {
+      // Allow AI to stay in WALK_FORWARDS
+      const newDirection = this.getDirection();
+      if (newDirection !== this.direction) {
+        this.direction = newDirection;
+        this.changeState(FighterState.IDLE_TURN);
+      }
+      return;
+    }
+
     if (!Control.isForward(this.playerId, this.direction)) {
       this.changeState(FighterState.IDLE);
     } else if (Control.isup(this.playerId))
@@ -521,6 +531,17 @@ export class Fighter {
   }
 
   handleWalkBackwardState() {
+    // Bypass control check for AI (playerId 1)
+    if (this.playerId === 1 && gameState.mode === "ai") {
+      // Allow AI to stay in WALK_BACKWARDS
+      const newDirection = this.getDirection();
+      if (newDirection !== this.direction) {
+        this.direction = newDirection;
+        this.changeState(FighterState.IDLE_TURN);
+      }
+      return;
+    }
+
     if (!Control.isBackward(this.playerId, this.direction)) {
       this.changeState(FighterState.IDLE);
     } else if (Control.isup(this.playerId))

@@ -7,6 +7,7 @@ import { VegasStage } from "../entities/stages/vegas-stage.js";
 import { SagatStage } from "../entities/stages/sagat-stage.js";
 import { playSound, stopSound } from "../engine/soundHandler.js";
 import { VersusScene } from "./VersusScene.js";
+import { setCurrentScene } from "../engine/mobileControls.js";
 
 // Define getStageClass as a standalone function
 export function getStageClass(stageName) {
@@ -76,7 +77,8 @@ export class StageSelectionScene {
       ["score-Z", [136, 125, 10, 10]],
       ["score- ", [0, 0, 10, 10]],
     ]);
-
+    setCurrentScene(this);
+    this.listenKeyRelease = false;
     this.setupEventListeners();
     console.log("StageSelectionScene initialized");
   }
@@ -113,6 +115,21 @@ export class StageSelectionScene {
       y < centerY + this.stageHeight / 2
     ) {
       this.selectStage();
+    }
+  }
+  handleMobileInput(key, code = key) {
+    if (this.isTransitioning || this.isSelectingStage) return;
+
+    switch (key) {
+      case "ArrowLeft":
+        this.navigateCarousel("prev");
+        break;
+      case "ArrowRight":
+        this.navigateCarousel("next");
+        break;
+      case "Enter":
+        this.selectStage();
+        break;
     }
   }
 
