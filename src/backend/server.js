@@ -1,6 +1,6 @@
 import express from "express";
 import http from "http";
-const Port = 3000;
+const PORT = process.env.PORT || 3000;
 import { Server } from "socket.io";
 import cors from "cors";
 
@@ -97,4 +97,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(Port, () => console.log(`server started on ${Port}`));
+server.listen(PORT, () => console.log(`server started on ${PORT}`));
