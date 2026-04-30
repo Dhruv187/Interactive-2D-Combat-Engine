@@ -11,17 +11,17 @@ import { setCurrentScene } from "../engine/mobileControls.js";
 
 // Define getStageClass as a standalone function
 export function getStageClass(stageName) {
-  switch (stageName) {
-    case "Ken":
+  switch ((stageName || "ken").toLowerCase()) {
+    case "ken":
       return KenStage;
-    case "Ryu":
+    case "ryu":
       return RyuStage;
-    case "Sagat":
+    case "sagat":
       return SagatStage;
-    case "Vegas":
+    case "vegas":
       return VegasStage;
     default:
-      return RyuStage; // Default to RyuStage if unknown
+      return KenStage; // Default to KenStage if unknown
   }
 }
 
@@ -78,7 +78,7 @@ export class StageSelectionScene {
       ["score- ", [0, 0, 10, 10]],
     ]);
     setCurrentScene(this);
-    this.listenKeyRelease = false;
+
     this.setupEventListeners();
     console.log("StageSelectionScene initialized");
   }

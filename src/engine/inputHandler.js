@@ -85,7 +85,7 @@ export const isBackward = (id, direction) =>
   (direction === FighterDirection.Left ? isright(id) : isleft(id));
 
 export const isIdle = (id) =>
-  playerInputEnabled[id] &&
+  !playerInputEnabled[id] || // remote fighter: always "idle" from input perspective
   !(isleft(id) || isright(id) || isup(id) || isdown(id));
 
 export const isLightPunch = (id) =>

@@ -2,6 +2,8 @@ import { registerKeyboardEvents } from "./engine/inputHandler.js";
 import { BattleScene } from "./scene/BattleScene.js";
 import { TitleScene } from "./scene/TitleScene.js";
 import { ContextHandler } from "./engine/contextHandler.js";
+import { serialRight } from "./engine/serialInputRight.js";
+import { serialLeft } from "./engine/serialInputLeft.js";
 
 export class StreetFighterGame {
   context = this.getContext();
@@ -40,7 +42,7 @@ export class StreetFighterGame {
       0,
       0,
       this.gameViewport.Width,
-      this.gameViewport.Height
+      this.gameViewport.Height,
     );
     window.requestAnimationFrame(this.frame.bind(this));
     this.frameTime = {
@@ -58,6 +60,13 @@ export class StreetFighterGame {
 
   start() {
     registerKeyboardEvents();
+    document.getElementById("connectRight").addEventListener("click", () => {
+      serialRight.connect();
+    });
+    document.getElementById("connectLeft").addEventListener("click", () => {
+      serialLeft.connect();
+    });
+
     window.requestAnimationFrame(this.frame.bind(this));
   }
 }

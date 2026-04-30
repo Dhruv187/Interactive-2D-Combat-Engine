@@ -22,7 +22,12 @@
     <script type="module" src="./src/index.js"></script>
   </head>
   <body>
-    <p class="cerdit" style="color: white">Project by: Dhruv Gandhi</p>
+    <div class="glove">
+      <p class="cerdit" style="color: white">Project by: Dhruv Gandhi</p>
+      <button id="connectRight">Connect RIGHT Hand</button>
+      <button id="connectLeft">Connect LEFT Hand</button>
+    </div>
+
     <div class="cabinet">
       <div class="pesudo-cabinet-el-1"></div>
       <div class="pesudo-cabinet-el-2"></div>
@@ -145,6 +150,7 @@
     <img id="sagatStagePre" src="./public/images/sagatStagePre.png" />
     <img id="vegasStagePre" src="./public/images/VegasStagePre.jpg" />
     <img id="versusScene" src="./public/images/versusScene.png" />
+    <img id="roomScene" src="./public/images/Multi-Scene.png" />
 
     <!-- audio-->
     <audio
@@ -239,6 +245,8 @@
       src="./public/sounds/heavy-kick-hit.ogg"
       preload="auto"
     ></audio>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
     <script type="module" src="./src/mobileControls.js"></script>
   </body>

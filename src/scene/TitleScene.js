@@ -4,7 +4,7 @@ import { StageSelectionScene } from "./stageSelection.js";
 import { setPlayerInput } from "../engine/inputHandler.js";
 import { gameState } from "../states/gameState.js";
 import { setCurrentScene } from "../engine/mobileControls.js";
-
+import { OptionScene } from "./Multi-Scene/OptionScene.js";
 export class TitleScene {
   music = document.getElementById("title-theme");
   constructor(changeScene = null) {
@@ -138,8 +138,8 @@ export class TitleScene {
       setTimeout(() => {
         if (this.changeScene && typeof this.changeScene === "function") {
           this.removeInputListeners();
-          const stageSelectionScene = new StageSelectionScene(this.changeScene);
-          this.changeScene(stageSelectionScene);
+          const optionScene = new OptionScene(this.changeScene);
+          this.changeScene(optionScene);
         }
       }, 1000);
     } else if (this.selectedOption === 2) {

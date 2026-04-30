@@ -28,6 +28,10 @@ canvas {
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 }
+.glove {
+  display: flex;
+  flex-direction: row;
+}
 .cerdit {
   color: white;
   font-size: 25px;
