@@ -1,5 +1,5 @@
-import { Control, controls } from "../constants/control.js";
-import { simulateKeyDown, simulateKeyUp } from "./inputHandler.js";
+import { Control, controls } from "./src/constants/control.js";
+import { simulateKeyDown, simulateKeyUp } from "./src/engine/inputHandler.js";
 
 const playerId = 0; // Mobile controls → Player 0
 let currentScene = null;

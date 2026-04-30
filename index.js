@@ -1,4 +1,4 @@
-import { StreetFighterGame } from "./src/StreetFighterGame";
+import { StreetFighterGame } from "./src/StreetFighterGame.js";
 
 window.onload = () => {
   new StreetFighterGame().start();
