@@ -1,0 +1,3 @@
+# Exclude backend — it's deployed separately on Render, not Vercel
+src/backend/
+src/backend/node_modules/

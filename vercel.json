@@ -1,3 +1,22 @@
 {
-  "routes": [{ "handle": "filesystem" }]
+  "version": 2,
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "framework": null,
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/src/(.*)\\.js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    { "handle": "filesystem" }
+  ]
 }
