@@ -3,7 +3,7 @@ import { BattleScene } from "../BattleScene.js";
 import { gameState } from "../../states/gameState.js";
 import { getStageClass } from "../stageSelection.js";
 import { playSound, stopSound } from "../../engine/soundHandler.js";
-import { setCurrentScene } from "../../engine/mobileControls.js";
+import { setCurrentScene } from "../../mobileControls.js";
 import { JoinScene } from "./JoinScene.js";
 import { HostScene } from "./HostScene.js";
 

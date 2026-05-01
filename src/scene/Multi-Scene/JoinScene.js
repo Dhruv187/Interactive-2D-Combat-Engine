@@ -1,7 +1,7 @@
 import { ContextHandler } from "../../engine/contextHandler.js";
 import { gameState } from "../../states/gameState.js";
 import { playSound, stopSound } from "../../engine/soundHandler.js";
-import { setCurrentScene } from "../../engine/mobileControls.js";
+import { setCurrentScene } from "../../mobileControls.js";
 import { TransitionScene } from "./TransitionScene.js";
 import { socket } from "../../engine/socket.js";
 

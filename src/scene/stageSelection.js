@@ -7,7 +7,7 @@ import { VegasStage } from "../entities/stages/vegas-stage.js";
 import { SagatStage } from "../entities/stages/sagat-stage.js";
 import { playSound, stopSound } from "../engine/soundHandler.js";
 import { VersusScene } from "./VersusScene.js";
-import { setCurrentScene } from "../engine/mobileControls.js";
+import { setCurrentScene } from "../mobileControls.js";
 
 // Define getStageClass as a standalone function
 export function getStageClass(stageName) {

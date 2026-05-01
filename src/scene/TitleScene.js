@@ -3,7 +3,7 @@ import { playSound, stopSound } from "../engine/soundHandler.js";
 import { StageSelectionScene } from "./stageSelection.js";
 import { setPlayerInput } from "../engine/inputHandler.js";
 import { gameState } from "../states/gameState.js";
-import { setCurrentScene } from "../engine/mobileControls.js";
+import { setCurrentScene } from "../mobileControls.js";
 import { OptionScene } from "./Multi-Scene/OptionScene.js";
 export class TitleScene {
   music = document.getElementById("title-theme");
