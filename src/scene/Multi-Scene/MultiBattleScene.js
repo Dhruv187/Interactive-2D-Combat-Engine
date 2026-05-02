@@ -71,6 +71,7 @@ export class MultiBattleScene {
 
     // Disable keyboard for the remote fighter so it only moves via network
     setPlayerInput(remoteId, false);
+    this.fighters[remoteId].isNetworkRemote = true;
 
     // Receive opponent moves and apply them directly to the remote fighter
     this.onOpponentMove = ({ playerId, moveData }) => {
@@ -86,6 +87,22 @@ export class MultiBattleScene {
       remoteFighter.direction = moveData.direction;
       remoteFighter.CurrentState = moveData.currentState;
       remoteFighter.animationFrame = moveData.animationFrame;
+      remoteFighter.attackStruck = moveData.attackStruck;
+
+      const animation = remoteFighter.animations[remoteFighter.CurrentState];
+      if (animation?.[remoteFighter.animationFrame]) {
+        remoteFighter.boxes = remoteFighter.getBoxes(
+          animation[remoteFighter.animationFrame][0],
+        );
+      }
+    };
+
+    this.onOpponentAttackHit = (hitData) => {
+      if (hitData.playerId !== remoteId || hitData.opponentId !== localId) {
+        return;
+      }
+
+      this.applyAttackHit(hitData, true);
     };
 
     // Handle opponent disconnecting (server emits this when the other player leaves)
@@ -101,11 +118,14 @@ export class MultiBattleScene {
     };
 
     socket.on("opponentMove", this.onOpponentMove);
+    socket.on("opponentAttackHit", this.onOpponentAttackHit);
     socket.on("opponentDisconnected", this.onOpponentDisconnect);
   }
 
   cleanupMultiplayerSocket() {
     if (this.onOpponentMove) socket.off("opponentMove", this.onOpponentMove);
+    if (this.onOpponentAttackHit)
+      socket.off("opponentAttackHit", this.onOpponentAttackHit);
     if (this.onOpponentDisconnect)
       socket.off("opponentDisconnected", this.onOpponentDisconnect);
   }
@@ -129,6 +149,7 @@ export class MultiBattleScene {
         direction: f.direction,
         currentState: f.CurrentState,
         animationFrame: f.animationFrame,
+        attackStruck: f.attackStruck,
       },
     });
   }
@@ -211,7 +232,10 @@ export class MultiBattleScene {
     this.entities = this.entities.filter((thisEntity) => thisEntity !== entity);
   }
 
-  handleAttackHit(playerId, opponentId, position, strength, time) {
+  applyAttackHit(
+    { playerId, opponentId, position, strength, hurtLocation },
+    applyHurtState = false,
+  ) {
     // Do nothing if battle has already ended
     if (this.battleEnded) return;
 
@@ -234,6 +258,23 @@ export class MultiBattleScene {
       position.y,
       playerId,
     );
+
+    if (applyHurtState && hurtLocation) {
+      this.fighters[opponentId].handleAttackHit(strength, hurtLocation);
+    }
+  }
+
+  handleAttackHit(playerId, opponentId, position, strength, hurtLocation) {
+    const hitData = { playerId, opponentId, position, strength, hurtLocation };
+
+    this.applyAttackHit(hitData);
+
+    if (gameState.mode === "multi" && playerId === gameState.playerId) {
+      socket.emit("attackHit", {
+        roomId: gameState.roomId,
+        hitData,
+      });
+    }
   }
 
   onTimeEnd(time) {

@@ -95,6 +95,10 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("opponentMove", { playerId, moveData });
   });
 
+  socket.on("attackHit", ({ roomId, hitData }) => {
+    socket.to(roomId).emit("opponentAttackHit", hitData);
+  });
+
   //Webrtc
 
   socket.on("webrtc-offer", ({ roomId, sdp, playerId }) => {

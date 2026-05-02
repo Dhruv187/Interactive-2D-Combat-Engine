@@ -1,8 +1,7 @@
 import { io } from "https://cdn.socket.io/4.7.2/socket.io.esm.min.js";
 
 export const socket = io("https://interactive-2d-combat-engine.onrender.com/", {
-  transports: ["polling"],
-  upgrade: false,
+  transports: ["websocket"],
   autoConnect: false,
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,

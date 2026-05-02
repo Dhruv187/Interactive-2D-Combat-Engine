@@ -793,6 +793,8 @@ export class Fighter {
   }
 
   updateAttackBoxCollided(time) {
+    if (this.isNetworkRemote) return;
+
     const { attackStrength, attackType } = this.states[this.CurrentState];
 
     // Return early if this attack has already struck
@@ -843,7 +845,8 @@ export class Fighter {
         this.playerId,
         this.opponent.playerId,
         hitPosition,
-        this.states[this.CurrentState].attackStrength
+        this.states[this.CurrentState].attackStrength,
+        hurtLocation
       );
       this.opponent.handleAttackHit(attackStrength, hurtLocation);
 
