@@ -3,7 +3,7 @@ import { gameState } from "../../states/gameState.js";
 import { playSound, stopSound } from "../../engine/soundHandler.js";
 import { setCurrentScene } from "../../mobileControls.js";
 import { TransitionScene } from "./TransitionScene.js";
-import { socket } from "../../engine/socket.js";
+import { connectSocket, socket } from "../../engine/socket.js";
 
 export class HostScene {
   image = document.getElementById("roomScene");
@@ -31,6 +31,8 @@ export class HostScene {
   // ─── Socket listeners ────────────────────────────────────────────────────────
 
   setupSocketListeners() {
+    connectSocket();
+
     // Server confirmed room was created → wait for joiner (bothJoined)
     this.onRoomCreated = ({ roomId, playerId }) => {
       console.log(`[HOST] ✅ Room created: ${roomId}, I am player ${playerId}`);

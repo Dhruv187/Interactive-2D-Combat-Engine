@@ -3,7 +3,7 @@ import { gameState } from "../../states/gameState.js";
 import { playSound, stopSound } from "../../engine/soundHandler.js";
 import { setCurrentScene } from "../../mobileControls.js";
 import { TransitionScene } from "./TransitionScene.js";
-import { socket } from "../../engine/socket.js";
+import { connectSocket, socket } from "../../engine/socket.js";
 
 export class JoinScene {
   image = document.getElementById("roomScene");
@@ -27,6 +27,8 @@ export class JoinScene {
   // ─── Socket listeners ────────────────────────────────────────────────────────
 
   setupSocketListeners() {
+    connectSocket();
+
     // Both players have joined → we now know our playerId and which stage to load
     this.onBothJoined = ({ roomId, mapping, selectedStage }) => {
       console.log("[JOIN] ✅ bothJoined received", {
