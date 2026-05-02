@@ -17,7 +17,7 @@ import { gameState } from "../../states/gameState.js";
 import { Shadow } from "../../entities/fighter/shared/shadow.js";
 import { LightHitSplash } from "../../entities/fighter/shared/LightHitSplash.js";
 import { MediumHitSplash } from "../../entities/fighter/shared/MediumHitSplash.js";
-import { HeavyHitSplash } from "../../entities/fighter/shared/HeavyHitSplash.js";
+import { HeavyHitSplash } from "../../entities/fighter/shared/heavyHitSplash.js";
 import { stopSound } from "../../engine/soundHandler.js";
 import { SimpleAI } from "../../states/ai.js";
 import { socket } from "../../engine/socket.js";

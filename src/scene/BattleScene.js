@@ -17,7 +17,7 @@ import { gameState } from "../states/gameState.js";
 import { Shadow } from "../entities/fighter/shared/shadow.js";
 import { LightHitSplash } from "../entities/fighter/shared/LightHitSplash.js";
 import { MediumHitSplash } from "../entities/fighter/shared/MediumHitSplash.js";
-import { HeavyHitSplash } from "../entities/fighter/shared/HeavyHitSplash.js";
+import { HeavyHitSplash } from "../entities/fighter/shared/heavyHitSplash.js";
 import { stopSound } from "../engine/soundHandler.js";
 import { SimpleAI } from "../states/ai.js";
 
@@ -91,13 +91,13 @@ export class BattleScene {
       y,
       direction,
       index,
-      this.handleAttackHit.bind(this)
+      this.handleAttackHit.bind(this),
     );
   }
 
   getFighterEntities() {
     const fighterEntities = gameState.fighters.map(
-      this.getFighterEntity.bind(this)
+      this.getFighterEntity.bind(this),
     );
 
     fighterEntities[0].opponent = fighterEntities[1];
@@ -138,7 +138,7 @@ export class BattleScene {
     const newHitPoints = Math.max(
       0,
       gameState.fighters[opponentId].hitPoints -
-        FighterAttackBaseData[strength].damage
+        FighterAttackBaseData[strength].damage,
     );
     gameState.fighters[opponentId].hitPoints = newHitPoints;
 
@@ -148,7 +148,7 @@ export class BattleScene {
       this.getHitSplashClass(strength),
       position.x,
       position.y,
-      playerId
+      playerId,
     );
   }
 
@@ -191,7 +191,7 @@ export class BattleScene {
     console.log(
       `Battle ending! Winner: Player ${winnerId + 1}, Loser: Player ${
         loserId + 1
-      }`
+      }`,
     );
 
     // Set winner and loser IDs for later use
