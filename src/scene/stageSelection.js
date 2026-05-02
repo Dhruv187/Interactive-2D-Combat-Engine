@@ -210,7 +210,7 @@ export class StageSelectionScene {
       x * direction,
       y,
       sourceWidth * scaleX,
-      sourceHeight * scaleY
+      sourceHeight * scaleY,
     );
     context.setTransform(1, 0, 0, 1, 0, 0);
   }
@@ -225,7 +225,7 @@ export class StageSelectionScene {
         x + index * (12 * scaleX),
         y,
         scaleX,
-        scaleY
+        scaleY,
       );
     }
   }
@@ -252,7 +252,7 @@ export class StageSelectionScene {
         xPos - drawWidth / 2,
         centerY - drawHeight / 2,
         drawWidth,
-        drawHeight
+        drawHeight,
       );
 
       if (Math.abs(offset) < 0.5) {
@@ -262,7 +262,7 @@ export class StageSelectionScene {
           xPos - drawWidth / 2 - 5,
           centerY - drawHeight / 2 - 5,
           drawWidth + 10,
-          drawHeight + 10
+          drawHeight + 10,
         );
       }
       context.restore();
@@ -300,7 +300,7 @@ export class StageSelectionScene {
       context.clip();
       const scale = Math.max(
         width / stageImage.width,
-        height / stageImage.height
+        height / stageImage.height,
       );
       const scaledWidth = stageImage.width * scale;
       const scaledHeight = stageImage.height * scale;
@@ -309,7 +309,7 @@ export class StageSelectionScene {
         x + width / 2 - scaledWidth / 2,
         y + height / 2 - scaledHeight / 2,
         scaledWidth,
-        scaledHeight
+        scaledHeight,
       );
       context.restore();
     }

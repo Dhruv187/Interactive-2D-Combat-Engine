@@ -287,8 +287,13 @@ export class HostScene {
     this.submitBtn.disabled = true;
     this.submitBtn.innerText = "Creating...";
 
-    console.log(`[HOST] 🚀 Emitting createRoom with ID: ${roomId}, stage: ${gameState.selectedStage}`);
-    socket.emit("createRoom", { roomId, selectedStage: gameState.selectedStage });
+    console.log(
+      `[HOST] 🚀 Emitting createRoom with ID: ${roomId}, stage: ${gameState.selectedStage}`,
+    );
+    socket.emit("createRoom", {
+      roomId,
+      selectedStage: gameState.selectedStage,
+    });
     // Response is handled in setupSocketListeners → onRoomCreated / onErrMessage
   }
 

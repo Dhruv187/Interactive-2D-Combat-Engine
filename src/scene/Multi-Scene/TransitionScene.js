@@ -77,22 +77,28 @@ export class TransitionScene {
       // gameState._bothJoinedReceived = true when the event arrives.
       // Check if it already fired while we were fading in.
       if (gameState._bothJoinedReceived) {
-        console.log("[TRANSITION] ⚡ Host: bothJoined already received, starting battle immediately.");
+        console.log(
+          "[TRANSITION] ⚡ Host: bothJoined already received, starting battle immediately.",
+        );
         // Small delay so the fade-in animation looks nice
         setTimeout(() => this.startTransition(), 300);
       } else {
-        console.log("[TRANSITION] 🔁 Host is waiting for joiner (bothJoined)...");
+        console.log(
+          "[TRANSITION] 🔁 Host is waiting for joiner (bothJoined)...",
+        );
         // Re-attach a fresh listener in case the HostScene one fired before
         // TransitionScene was mounted (belt-and-suspenders).
         this.onBothJoined = ({ roomId, mapping, selectedStage }) => {
-          console.log("[TRANSITION] ✅ bothJoined received on host side", mapping);
+          console.log(
+            "[TRANSITION] ✅ bothJoined received on host side",
+            mapping,
+          );
           if (selectedStage) gameState.selectedStage = selectedStage;
           gameState._bothJoinedReceived = true;
           this.startTransition();
         };
         socket.on("bothJoined", this.onBothJoined);
       }
-
     } else if (gameState.mode === "multi" && gameState.playerId === 1) {
       // JOINER path: bothJoined already handled in JoinScene—go straight to battle
       console.log("[TRANSITION] ⚡ Joiner auto-starting battle...");

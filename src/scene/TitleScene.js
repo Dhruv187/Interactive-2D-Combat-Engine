@@ -189,7 +189,7 @@ export class TitleScene {
       x * direction,
       y,
       sourceWidth * scaleX,
-      sourceHeight * scaleY
+      sourceHeight * scaleY,
     );
     context.setTransform(1, 0, 0, 1, 0, 0);
   }
@@ -205,7 +205,7 @@ export class TitleScene {
         x + index * (12 * scaleX),
         y,
         scaleX,
-        scaleY
+        scaleY,
       );
     }
   }

@@ -88,7 +88,7 @@ export class VersusScene {
       x * direction,
       y,
       sourceWidth * scaleX,
-      sourceHeight * scaleY
+      sourceHeight * scaleY,
     );
     context.setTransform(1, 0, 0, 1, 0, 0);
   }

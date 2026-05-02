@@ -29,7 +29,11 @@ export class JoinScene {
   setupSocketListeners() {
     // Both players have joined → we now know our playerId and which stage to load
     this.onBothJoined = ({ roomId, mapping, selectedStage }) => {
-      console.log("[JOIN] ✅ bothJoined received", { roomId, mapping, selectedStage });
+      console.log("[JOIN] ✅ bothJoined received", {
+        roomId,
+        mapping,
+        selectedStage,
+      });
       gameState.roomId = String(roomId);
       gameState.playerId = mapping[socket.id]; // 0 or 1
       gameState.mode = "multi";
