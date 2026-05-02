@@ -85,9 +85,13 @@ export class MultiBattleScene {
       remoteFighter.velocity.x = moveData.velocity.x;
       remoteFighter.velocity.y = moveData.velocity.y;
       remoteFighter.direction = moveData.direction;
-      remoteFighter.CurrentState = moveData.currentState;
-      remoteFighter.animationFrame = moveData.animationFrame;
       remoteFighter.attackStruck = moveData.attackStruck;
+
+      if (remoteFighter.CurrentState !== moveData.currentState) {
+        remoteFighter.CurrentState = moveData.currentState;
+        remoteFighter.animationFrame = moveData.animationFrame;
+        remoteFighter.animationTimer = performance.now();
+      }
 
       const animation = remoteFighter.animations[remoteFighter.CurrentState];
       if (animation?.[remoteFighter.animationFrame]) {
@@ -357,6 +361,8 @@ export class MultiBattleScene {
     for (const fighter of this.fighters) {
       if (time.previous < this.hurtTimer) {
         fighter.updateHurtShake(time, this.hurtTimer);
+      } else if (fighter.isNetworkRemote) {
+        fighter.updateNetworkRemote(time, context, this.camera);
       } else {
         fighter.update(time, context, this.camera);
       }

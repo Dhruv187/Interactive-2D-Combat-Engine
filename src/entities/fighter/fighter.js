@@ -899,6 +899,11 @@ export class Fighter {
     this.updateAttackBoxCollided(time);
   }
 
+  updateNetworkRemote(time, context, camera) {
+    this.updateAnimation(time);
+    this.updateStageConstraints(time, context, camera);
+  }
+
   draw(context, camera) {
     const [frameKey] = this.animations[this.CurrentState][this.animationFrame];
     const [[[x, y, width, height], [originX, originY]]] =
