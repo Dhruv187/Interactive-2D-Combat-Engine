@@ -5,14 +5,40 @@ import { Server } from "socket.io";
 import cors from "cors";
 
 const app = express();
-app.use(cors());
+
+const allowedOrigins = [
+  "https://interactive-2-d-combat-engine.vercel.app",
+  /^https:\/\/interactive-2-d-combat-engine.*\.vercel\.app$/,
+  /^http:\/\/localhost:\d+$/,
+  /^http:\/\/127\.0\.0\.1:\d+$/,
+];
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+
+  return allowedOrigins.some((allowedOrigin) => {
+    if (typeof allowedOrigin === "string") return allowedOrigin === origin;
+    return allowedOrigin.test(origin);
+  });
+}
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (isAllowedOrigin(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`Origin not allowed by CORS: ${origin}`));
+  },
+  methods: ["GET", "POST"],
+};
+
+app.use(cors(corsOptions));
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: "https://interactive-2-d-combat-engine.vercel.app",
-    methods: ["GET", "POST"],
-  },
+  cors: corsOptions,
 });
 
 app.get("/", (req, res) => {
