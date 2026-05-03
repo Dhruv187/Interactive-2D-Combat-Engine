@@ -8,23 +8,39 @@ export class SerialInputLeft {
   }
 
   async connect() {
-    this.port = await navigator.serial.requestPort();
-    await this.port.open({ baudRate: 19200 });
+    try {
+      this.port = await navigator.serial.requestPort();
+      await this.port.open({ baudRate: 19200 });
 
-    const decoder = new TextDecoderStream();
-    this.port.readable.pipeTo(decoder.writable);
-    this.reader = decoder.readable.getReader();
+      const decoder = new TextDecoderStream();
+      this.port.readable.pipeTo(decoder.writable);
+      this.reader = decoder.readable.getReader();
 
-    this.readLoop();
+      this.readLoop();
+    } catch (err) {
+      console.error("Serial Left Error:", err);
+    }
   }
 
   async readLoop() {
+    let buffer = "";
+
     while (true) {
       const { value, done } = await this.reader.read();
       if (done) break;
       if (!value) continue;
 
-      this.handleSerial(value.trim());
+      buffer += value;
+
+      let lines = buffer.split("\n");
+      buffer = lines.pop(); // keep incomplete part
+
+      for (let line of lines) {
+        const cmd = line.trim();
+        if (cmd) {
+          this.handleSerial(cmd);
+        }
+      }
     }
   }
 
@@ -45,7 +61,6 @@ export class SerialInputLeft {
       simulateKeyDown(null, P0[Control.MEDIUM_KICK]);
       setTimeout(() => simulateKeyUp(null, P0[Control.MEDIUM_KICK]), 50);
     } else if (cmd === "NEUTRAL") {
-      // No attack keys held in neutral
       simulateKeyUp(null, P0[Control.LIGHT_PUNCH]);
       simulateKeyUp(null, P0[Control.MEDIUM_PUNCH]);
       simulateKeyUp(null, P0[Control.HEAVY_PUNCH]);
