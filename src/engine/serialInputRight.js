@@ -8,39 +8,23 @@ export class SerialInputRight {
   }
 
   async connect() {
-    try {
-      this.port = await navigator.serial.requestPort();
-      await this.port.open({ baudRate: 19200 });
+    this.port = await navigator.serial.requestPort();
+    await this.port.open({ baudRate: 19200 });
 
-      const decoder = new TextDecoderStream();
-      this.port.readable.pipeTo(decoder.writable);
-      this.reader = decoder.readable.getReader();
+    const decoder = new TextDecoderStream();
+    this.port.readable.pipeTo(decoder.writable);
+    this.reader = decoder.readable.getReader();
 
-      this.readLoop();
-    } catch (err) {
-      console.error("Serial Right Error:", err);
-    }
+    this.readLoop();
   }
 
   async readLoop() {
-    let buffer = "";
-
     while (true) {
       const { value, done } = await this.reader.read();
       if (done) break;
       if (!value) continue;
 
-      buffer += value;
-
-      let lines = buffer.split("\n");
-      buffer = lines.pop(); // keep incomplete part
-
-      for (let line of lines) {
-        const cmd = line.trim();
-        if (cmd) {
-          this.handleSerial(cmd);
-        }
-      }
+      this.handleSerial(value.trim());
     }
   }
 
