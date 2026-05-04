@@ -1,10 +1,14 @@
 import { simulateKeyDown, simulateKeyUp } from "./inputHandler.js";
 import { controls, Control } from "../constants/control.js";
+import { gameState } from "../states/gameState.js";
+
+const VALID_COMMANDS = new Set(["FORWARD", "BACKWARD", "NEUTRAL"]);
 
 export class SerialInputRight {
   constructor() {
     this.port = null;
     this.reader = null;
+    this.buffer = "";
   }
 
   async connect() {
@@ -24,23 +28,50 @@ export class SerialInputRight {
       if (done) break;
       if (!value) continue;
 
-      this.handleSerial(value.trim());
+      this.handleChunk(value);
     }
   }
 
+  handleChunk(chunk) {
+    this.buffer += chunk;
+
+    const lines = this.buffer.split(/\r\n|\n|\r/);
+    this.buffer = lines.pop() ?? "";
+
+    for (const line of lines) {
+      const cmd = line.trim().toUpperCase();
+      if (cmd) this.handleSerial(cmd);
+    }
+
+    if (this.buffer.length > 256) {
+      this.buffer = "";
+    }
+  }
+
+  getPlayerKeyboard() {
+    const playerId =
+      gameState.mode === "multi" && gameState.playerId !== null
+        ? gameState.playerId
+        : 0;
+
+    return (controls[playerId] ?? controls[0]).keyboard;
+  }
+
   handleSerial(cmd) {
-    const P0 = controls[0].keyboard;
+    if (!VALID_COMMANDS.has(cmd)) return;
+
+    const playerKeyboard = this.getPlayerKeyboard();
     console.log("[RIGHT]", cmd);
 
     if (cmd === "FORWARD") {
-      simulateKeyDown(null, P0[Control.RIGHT]);
-      simulateKeyUp(null, P0[Control.LEFT]);
+      simulateKeyDown(null, playerKeyboard[Control.RIGHT]);
+      simulateKeyUp(null, playerKeyboard[Control.LEFT]);
     } else if (cmd === "BACKWARD") {
-      simulateKeyDown(null, P0[Control.LEFT]);
-      simulateKeyUp(null, P0[Control.RIGHT]);
+      simulateKeyDown(null, playerKeyboard[Control.LEFT]);
+      simulateKeyUp(null, playerKeyboard[Control.RIGHT]);
     } else if (cmd === "NEUTRAL") {
-      simulateKeyUp(null, P0[Control.RIGHT]);
-      simulateKeyUp(null, P0[Control.LEFT]);
+      simulateKeyUp(null, playerKeyboard[Control.RIGHT]);
+      simulateKeyUp(null, playerKeyboard[Control.LEFT]);
     }
   }
 }
