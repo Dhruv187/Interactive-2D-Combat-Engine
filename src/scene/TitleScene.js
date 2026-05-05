@@ -224,7 +224,7 @@ export class TitleScene {
     this.drawTitleScene(context);
 
     this.drawTitle(context, "PRESS TO START", 130, 170, 0.7, 0.7);
-    this.drawTitle(context, "CREATE |JOIN ROOM @SOON", 130, 183, 0.7, 0.7);
+    this.drawTitle(context, "CREATE |JOIN ROOM", 130, 183, 0.7, 0.7);
     this.drawTitle(context, "AI VS PLAYER | MOBILE |", 130, 196, 0.7, 0.7);
 
     // Draw the arrow

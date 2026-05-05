@@ -80,16 +80,12 @@ export class JoinScene {
   createUI() {
     this.uiContainer = document.createElement("div");
     Object.assign(this.uiContainer.style, {
-      position: "fixed",
+      position: "absolute",
       top: "0",
       left: "0",
-      width: "100vw",
-      height: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: "999999",
+      width: "100%",
+      height: "100%",
+      zIndex: "10",
       pointerEvents: "auto",
       textAlign: "center",
       color: "white",
@@ -100,13 +96,18 @@ export class JoinScene {
     const title = document.createElement("h1");
     title.innerText = "JOIN";
     Object.assign(title.style, {
-      fontSize: "80px",
+      position: "absolute",
+      top: "25%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      fontSize: "clamp(40px, 8vw, 80px)",
       fontWeight: "bold",
       textShadow: "3px 3px 0 gold",
       marginBottom: "30px",
       color: "gold",
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
+      fontFamily: '"Pixelify Sans", Georgia, serif',
       backgroundClip: "text",
       filter: "drop-shadow(0 0 10px #FF4500)",
     });
@@ -115,7 +116,12 @@ export class JoinScene {
     const label = document.createElement("div");
     label.innerText = "ROOM ID";
     Object.assign(label.style, {
-      fontSize: "28px",
+      position: "absolute",
+      top: "36%",
+      left: "50%",
+      transform: "translateX(-50%)",
+      fontSize: "clamp(18px, 4vw, 28px)",
+      fontFamily: '"Pixelify Sans", Georgia, serif',
       marginBottom: "10px",
       color: "#fff",
       textShadow: "2px 2px 0 #000",
@@ -124,10 +130,15 @@ export class JoinScene {
     // Input
     this.input = document.createElement("input");
     Object.assign(this.input.style, {
-      width: "300px",
-      height: "40px",
+      position: "absolute",
+      top: "48%",
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "clamp(200px, 60vw, 400px)",
+      height: "clamp(35px, 6vh, 50px)",
       textAlign: "center",
-      fontSize: "20px",
+      fontSize: "clamp(14px, 3vw, 20px)",
+      fontFamily: '"Pixelify Sans", Georgia, serif',
       border: "3px solid #FFD700",
       backgroundColor: "rgba(255,255,255,0.95)",
       borderRadius: "6px",
@@ -164,11 +175,16 @@ export class JoinScene {
     this.submitBtn = document.createElement("button");
     this.submitBtn.innerText = "Submit";
     Object.assign(this.submitBtn.style, {
+      position: "absolute",
+      top: "74%",
+      left: "50%",
+      transform: "translateX(-50%)",
       background: "linear-gradient(180deg, #FF4500, #B22222)",
       color: "white",
       border: "2px solid #FFD700",
-      padding: "10px 30px",
-      fontSize: "20px",
+      fontFamily: '"Pixelify Sans", Georgia, serif',
+      padding: "clamp(8px, 2vw, 12px) clamp(16px, 5vw, 30px)",
+      fontSize: "clamp(14px, 3vw, 20px)",
       borderRadius: "8px",
       cursor: "pointer",
       textShadow: "1px 1px 0 black",
@@ -183,7 +199,7 @@ export class JoinScene {
       this.waitingDiv,
       this.submitBtn,
     );
-    document.body.appendChild(this.uiContainer);
+    document.querySelector(".screen").appendChild(this.uiContainer);
   }
 
   showError(msg) {

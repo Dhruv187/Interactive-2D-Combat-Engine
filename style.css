@@ -28,15 +28,37 @@ canvas {
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 }
+
 .glove {
   display: flex;
   flex-direction: row;
+}
+.glove #connectRight {
+  font-family: "Pixelify Sans", sans-serif;
+  border-radius: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-right: 5px;
+  background-color: #bd3002;
+  color: #efa125;
+  border: 2px solid #0b5256;
+}
+
+.glove #connectLeft {
+  font-family: "Pixelify Sans", sans-serif;
+  border-radius: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+  background-color: #bd3002;
+  color: #efa125;
+  border: 2px solid #0b5256;
 }
 .cerdit {
   color: white;
   font-size: 25px;
   margin-left: 5px;
   font-family: "Pixelify Sans", sans-serif;
+  margin-right: 15px;
 }
 img {
   display: none;
@@ -118,6 +140,7 @@ img {
   }
 
   .screen {
+    position: relative;
     margin-top: 20px;
     margin-left: 9px;
     border: 12px solid #0c3e3f;

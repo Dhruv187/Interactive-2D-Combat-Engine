@@ -28,25 +28,18 @@ export class HostScene {
     setCurrentScene(this);
   }
 
-  // ─── Socket listeners ────────────────────────────────────────────────────────
-
   setupSocketListeners() {
     connectSocket();
 
-    // Server confirmed room was created → wait for joiner (bothJoined)
     this.onRoomCreated = ({ roomId, playerId }) => {
-      console.log(`[HOST] ✅ Room created: ${roomId}, I am player ${playerId}`);
+      console.log(`[HOST] Room created: ${roomId}, I am player ${playerId}`);
       gameState.roomId = String(roomId);
-      gameState.playerId = playerId; // always 0 for host
+      gameState.playerId = playerId;
       gameState.mode = "multi";
 
-      // Register bothJoined listener IMMEDIATELY — before any delay — so we
-      // never miss it even if the joiner connects during the 1-second fade-out.
-      this.onBothJoined = ({ roomId: rid, mapping, selectedStage }) => {
-        console.log("[HOST] ✅ bothJoined received in HostScene", mapping);
+      this.onBothJoined = ({ mapping, selectedStage }) => {
+        console.log("[HOST] bothJoined received in HostScene", mapping);
         if (selectedStage) gameState.selectedStage = selectedStage;
-        // Mark that we already received bothJoined so TransitionScene
-        // doesn't have to wait for it again.
         gameState._bothJoinedReceived = true;
       };
       socket.on("bothJoined", this.onBothJoined);
@@ -54,11 +47,9 @@ export class HostScene {
       this.doTransition();
     };
 
-    // Server sent an error (e.g. room already exists)
     this.onErrMessage = (msg) => {
-      console.warn("[HOST] ❌ Server error:", msg);
+      console.warn("[HOST] Server error:", msg);
       this.showError(msg);
-      // Re-enable the button so player can try again
       this.submitBtn.disabled = false;
       this.submitBtn.innerText = "Generate";
     };
@@ -70,11 +61,8 @@ export class HostScene {
   cleanupSocketListeners() {
     socket.off("roomCreated", this.onRoomCreated);
     socket.off("errMessage", this.onErrMessage);
-    // NOTE: we intentionally do NOT remove the bothJoined listener here.
-    // TransitionScene will inherit it and clean it up after use.
+    if (this.onBothJoined) socket.off("bothJoined", this.onBothJoined);
   }
-
-  // ─── UI ──────────────────────────────────────────────────────────────────────
 
   setupEventListeners() {
     this.canvas = document.querySelector("canvas");
@@ -88,97 +76,99 @@ export class HostScene {
   }
 
   createUI() {
+    const screen = document.querySelector(".screen");
+    screen.style.position = "relative";
+
     this.uiContainer = document.createElement("div");
     Object.assign(this.uiContainer.style, {
-      position: "fixed",
-      top: "0",
-      left: "0",
-      width: "100vw",
-      height: "100vh",
+      position: "absolute",
+      inset: "0",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+      pointerEvents: "auto",
+      textAlign: "center",
+      zIndex: "10",
+    });
+
+    this.formPanel = document.createElement("div");
+    Object.assign(this.formPanel.style, {
+      width: "100%",
+      height: "100%",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      zIndex: "999999",
-      pointerEvents: "auto",
-      textAlign: "center",
       color: "white",
-      fontFamily: "serif",
+      fontFamily: '"Pixelify Sans", Georgia, serif',
     });
 
-    // Title
-    const title = document.createElement("h1");
-    title.innerText = "HOST";
-    Object.assign(title.style, {
-      fontSize: "80px",
+    this.title = document.createElement("h1");
+    this.title.innerText = "HOST";
+    Object.assign(this.title.style, {
+      fontSize: "clamp(40px, 8vw, 80px)",
       fontWeight: "bold",
       textShadow: "3px 3px 0 gold",
       marginBottom: "30px",
       color: "gold",
+      fontFamily: '"Pixelify Sans", Georgia, serif',
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
       backgroundClip: "text",
       filter: "drop-shadow(0 0 10px #FF4500)",
     });
 
-    // Label
-    const label = document.createElement("div");
-    label.innerText = "ROOM ID";
-    Object.assign(label.style, {
-      fontSize: "28px",
-      marginBottom: "10px",
+    this.roomLabel = document.createElement("div");
+    this.roomLabel.innerText = "ROOM ID";
+    Object.assign(this.roomLabel.style, {
       color: "#fff",
       textShadow: "2px 2px 0 #000",
+      lineHeight: "1",
     });
 
-    // Input box
     this.input = document.createElement("input");
     Object.assign(this.input.style, {
-      width: "300px",
-      height: "40px",
       textAlign: "center",
-      fontSize: "20px",
       border: "3px solid #FFD700",
       backgroundColor: "rgba(255,255,255,0.95)",
       borderRadius: "6px",
-      marginBottom: "8px",
       outline: "none",
       boxShadow: "0 0 10px #FF4500 inset",
+      maxWidth: "92%",
     });
     this.input.placeholder = "Enter Room ID (numbers only)";
     this.input.type = "number";
     setTimeout(() => this.input.focus(), 50);
     this.input.addEventListener("keydown", (e) => e.stopPropagation());
 
-    // Error text (hidden by default)
     this.errorDiv = document.createElement("div");
     Object.assign(this.errorDiv.style, {
       color: "#FF4444",
-      fontSize: "16px",
-      marginBottom: "14px",
-      minHeight: "20px",
+      minHeight: "1em",
       textShadow: "1px 1px 0 #000",
+      maxWidth: "92%",
+      lineHeight: "1.1",
     });
 
-    // Stage label
-    const selectStage = document.createElement("div");
-    selectStage.innerText = "SELECT STAGE";
-    Object.assign(selectStage.style, {
-      fontSize: "28px",
-      marginBottom: "10px",
+    this.stageLabel = document.createElement("div");
+    this.stageLabel.innerText = "SELECT STAGE";
+    Object.assign(this.stageLabel.style, {
       color: "#fff",
       textShadow: "2px 2px 0 #000",
+      lineHeight: "1",
     });
 
-    // Stage container
-    const stageContainer = document.createElement("div");
-    Object.assign(stageContainer.style, {
-      display: "flex",
-      gap: "15px",
+    this.stageContainer = document.createElement("div");
+    Object.assign(this.stageContainer.style, {
+      display: "grid",
+      gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
       justifyContent: "center",
-      marginBottom: "20px",
+      alignItems: "center",
+      maxWidth: "94%",
     });
 
+    this.stageCards = [];
     const stages = [
       { id: "ken", img: this.kenStageImg },
       { id: "ryu", img: this.ryuStageImg },
@@ -190,70 +180,194 @@ export class HostScene {
       const stageDiv = document.createElement("div");
       Object.assign(stageDiv.style, {
         border: "3px solid #444",
-        borderRadius: "10px",
+        borderRadius: "6px",
         overflow: "hidden",
         cursor: "pointer",
-        transition: "all 0.2s ease",
+        transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+        background: "#111",
       });
+
       const img = stage.img.cloneNode(true);
       Object.assign(img.style, {
-        width: "140px",
-        height: "90px",
+        width: "100%",
+        height: "100%",
         display: "block",
+        objectFit: "cover",
       });
+
       stageDiv.appendChild(img);
-      stageContainer.appendChild(stageDiv);
+      this.stageContainer.appendChild(stageDiv);
+      this.stageCards.push({ id: stage.id, element: stageDiv });
 
       stageDiv.addEventListener("click", () => {
         gameState.selectedStage = stage.id;
-        [...stageContainer.children].forEach((el) => {
-          el.style.border = "3px solid #444";
-          el.style.transform = "scale(1)";
-        });
-        stageDiv.style.border = "3px solid gold";
-        stageDiv.style.transform = "scale(1.1)";
+        this.updateSelectedStage();
       });
     });
 
-    // Generate button
     this.submitBtn = document.createElement("button");
     this.submitBtn.innerText = "Generate";
     Object.assign(this.submitBtn.style, {
       background: "linear-gradient(180deg, #FF4500, #B22222)",
       color: "white",
       border: "2px solid #FFD700",
-      padding: "10px 30px",
-      fontSize: "20px",
       borderRadius: "8px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
       cursor: "pointer",
       textShadow: "1px 1px 0 black",
+      fontFamily: '"Pixelify Sans", Georgia, serif',
+      marginBottom: "50px",
+      lineHeight: "1",
+      whiteSpace: "nowrap",
     });
     this.submitBtn.onclick = () => this.handleGenerate();
 
-    this.uiContainer.append(
-      title,
-      label,
+    this.formPanel.append(
+      this.title,
+      this.roomLabel,
       this.input,
       this.errorDiv,
-      selectStage,
-      stageContainer,
+      this.stageLabel,
+      this.stageContainer,
       this.submitBtn,
     );
-    document.body.appendChild(this.uiContainer);
+
+    this.uiContainer.append(this.formPanel);
+    screen.appendChild(this.uiContainer);
+
+    gameState.selectedStage = gameState.selectedStage || "ken";
+    this.updateSelectedStage();
+    this.applyResponsiveLayout();
+
+    this.resizeHandler = this.applyResponsiveLayout.bind(this);
+    window.addEventListener("resize", this.resizeHandler);
+  }
+
+  clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  applyResponsiveLayout() {
+    if (!this.uiContainer) return;
+
+    const screen = document.querySelector(".screen");
+    const { width, height } = screen.getBoundingClientRect();
+    const compact = width < 420 || height < 260;
+    const gap = this.clamp(height * (compact ? 0.016 : 0.022), 3, 14);
+    const titleSize = this.clamp(
+      Math.min(
+        width * (compact ? 0.11 : 0.16),
+        height * (compact ? 0.11 : 0.2),
+      ),
+      compact ? 18 : 30,
+      compact ? 34 : 82,
+    );
+    const labelSize = this.clamp(
+      Math.min(width * 0.055, height * 0.085),
+      14,
+      28,
+    );
+    const inputHeight = this.clamp(height * 0.11, 24, 44);
+    const inputWidth = this.clamp(width * 0.68, 170, 360);
+    const stageGap = this.clamp(width * 0.018, 4, 14);
+    const stageWidth = this.clamp(
+      (Math.min(width * 0.92, 560) - stageGap * 3) / 4,
+      48,
+      124,
+    );
+    const stageHeight = this.clamp(stageWidth * 0.58, 28, 72);
+    const buttonFontSize = this.clamp(
+      Math.min(width * 0.05, height * 0.08),
+      12,
+      20,
+    );
+    const buttonWidth = this.clamp(
+      compact ? width * 0.42 : width * 0.34,
+      118,
+      210,
+    );
+    const buttonHeight = this.clamp(height * (compact ? 0.13 : 0.1), 30, 48);
+
+    Object.assign(this.uiContainer.style, {
+      padding: `${this.clamp(height * 0.035, 6, 28)}px ${this.clamp(
+        width * 0.04,
+        8,
+        34,
+      )}px`,
+    });
+
+    this.formPanel.style.gap = `${gap}px`;
+    this.formPanel.style.justifyContent = compact ? "flex-start" : "center";
+    this.title.style.fontSize = `${titleSize}px`;
+    this.title.style.padding = compact ? "3px 10px" : "0";
+    this.title.style.marginBottom = compact ? "1px" : "0";
+    this.title.style.border = compact
+      ? "2px solid rgba(255, 210, 63, 0.9)"
+      : "none";
+    this.title.style.borderRadius = compact ? "999px" : "0";
+    this.title.style.backgroundColor = compact
+      ? "rgba(9, 24, 23, 0.88)"
+      : "transparent";
+    this.title.style.boxShadow = compact
+      ? "0 0 0 2px rgba(58, 23, 0, 0.45)"
+      : "none";
+    this.roomLabel.style.fontSize = `${labelSize}px`;
+    this.stageLabel.style.fontSize = `${labelSize}px`;
+    this.errorDiv.style.fontSize = `${this.clamp(labelSize * 0.7, 10, 16)}px`;
+
+    Object.assign(this.input.style, {
+      width: `${inputWidth}px`,
+      height: `${inputHeight}px`,
+      fontSize: `${this.clamp(buttonFontSize * 0.9, 12, 18)}px`,
+    });
+
+    Object.assign(this.stageContainer.style, {
+      gap: `${stageGap}px`,
+      width: `${stageWidth * 4 + stageGap * 3}px`,
+    });
+
+    for (const { element } of this.stageCards) {
+      Object.assign(element.style, {
+        width: `${stageWidth}px`,
+        height: `${stageHeight}px`,
+        borderWidth: width < 420 ? "2px" : "3px",
+      });
+    }
+
+    Object.assign(this.submitBtn.style, {
+      width: `${buttonWidth}px`,
+      minWidth: `${buttonWidth}px`,
+      height: `${buttonHeight}px`,
+      padding: "0 16px",
+      fontSize: `${buttonFontSize}px`,
+      alignSelf: "center",
+    });
+  }
+
+  updateSelectedStage() {
+    const selectedStage = gameState.selectedStage || "ken";
+
+    for (const { id, element } of this.stageCards) {
+      const isSelected = id === selectedStage;
+      element.style.borderColor = isSelected ? "#FFD700" : "#444";
+      element.style.boxShadow = isSelected
+        ? "0 0 0 2px rgba(255, 69, 0, 0.75)"
+        : "none";
+    }
   }
 
   showError(msg) {
-    this.errorDiv.innerText = "⚠️ " + msg;
+    this.errorDiv.innerText = "Warning: " + msg;
   }
 
   clearError() {
     this.errorDiv.innerText = "";
   }
 
-  // ─── Input handling ───────────────────────────────────────────────────────────
-
   handleClick(event) {
-    // canvas click — do nothing in Host scene
+    // Canvas click intentionally does nothing in the host scene.
   }
 
   handleMobileInput(key, code) {
@@ -267,20 +381,15 @@ export class HostScene {
     if (event.key === "Enter") this.handleGenerate();
   }
 
-  // ─── Core action: emit createRoom ─────────────────────────────────────────────
-
   handleGenerate() {
     if (this.isTransitioning) return;
 
     const roomId = this.input.value.trim();
-
-    // Validation
     if (!roomId) {
       this.showError("Please enter a Room ID first!");
       return;
     }
 
-    // Default to "ken" if no stage selected
     if (!gameState.selectedStage) {
       gameState.selectedStage = "ken";
     }
@@ -290,16 +399,13 @@ export class HostScene {
     this.submitBtn.innerText = "Creating...";
 
     console.log(
-      `[HOST] 🚀 Emitting createRoom with ID: ${roomId}, stage: ${gameState.selectedStage}`,
+      `[HOST] Emitting createRoom with ID: ${roomId}, stage: ${gameState.selectedStage}`,
     );
     socket.emit("createRoom", {
       roomId,
       selectedStage: gameState.selectedStage,
     });
-    // Response is handled in setupSocketListeners → onRoomCreated / onErrMessage
   }
-
-  // ─── Transition (called AFTER server confirms room) ───────────────────────────
 
   doTransition() {
     if (this.isTransitioning) return;
@@ -307,6 +413,10 @@ export class HostScene {
     this.contextHandler.startDimDown();
 
     if (this.uiContainer) this.uiContainer.remove();
+    if (this.resizeHandler) {
+      window.removeEventListener("resize", this.resizeHandler);
+      this.resizeHandler = null;
+    }
     this.canvas.style.pointerEvents = "auto";
 
     setTimeout(() => {
